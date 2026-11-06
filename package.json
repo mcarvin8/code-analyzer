@@ -23,6 +23,7 @@
 		"@salesforce/code-analyzer-uibundle-engine": "0.2.0",
 		"@salesforce/core": "8.23.4",
 		"@salesforce/sf-plugins-core": "^12.2.26",
+		"@salesforce/source-deploy-retrieve": "13.11.1",
 		"@salesforce/ts-types": "^2.0.12",
 		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^20.0.0",

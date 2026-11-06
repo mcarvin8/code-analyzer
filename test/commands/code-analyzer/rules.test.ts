@@ -91,6 +91,36 @@ describe('`code-analyzer rules` unit tests', () => {
 		vi.restoreAllMocks();
 	});
 
+	describe('--target-manifest', () => {
+		it('Accepts a real file', async () => {
+			const inputValue = 'package.json';
+			await runRulesCommand(['--target-manifest', inputValue]);
+			expect(executeSpy).toHaveBeenCalled();
+			expect(receivedActionInput).toHaveProperty('target-manifest', [inputValue]);
+		});
+
+		it('Can be supplied multiple times', async () => {
+			const inputValue1 = 'package.json';
+			const inputValue2 = 'LICENSE';
+			await runRulesCommand(['--target-manifest', inputValue1, '--target-manifest', inputValue2]);
+			expect(executeSpy).toHaveBeenCalled();
+			expect(receivedActionInput).toHaveProperty('target-manifest', [inputValue1, inputValue2]);
+		});
+
+		it('Rejects non-existent file', async () => {
+			const inputValue = 'definitelyFakeManifest.xml';
+			const executionPromise = runRulesCommand(['--target-manifest', inputValue]);
+			await expect(executionPromise).rejects.toThrow(`No file found at ${inputValue}`);
+			expect(executeSpy).not.toHaveBeenCalled();
+		});
+
+		it('Is unused if not directly specified', async () => {
+			await runRulesCommand([]);
+			expect(executeSpy).toHaveBeenCalled();
+			expect(receivedActionInput['target-manifest']).toBeUndefined();
+		});
+	});
+
 	describe('--rule-selector', () => {
 		it('Can be supplied once with a single value', async () => {
 			const inputValue = 'abcde';

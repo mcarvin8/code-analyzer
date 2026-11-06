@@ -92,6 +92,20 @@ Each targeted file must live within the workspace specified by the –-workspace
 
 If you specify `--workspace` but not `--target`, then all the files within your workspace are targeted.
 
+# flags.target-manifest.summary
+
+Manifest (package.xml) whose components are targeted for analysis.
+
+# flags.target-manifest.description
+
+Use this flag to target only the metadata components listed in a manifest file, such as the delta package.xml that your CI pipeline generates for a pull request or uses with `sf project deploy validate --manifest`.
+
+Code Analyzer resolves each component in the manifest against the files in your workspace, using the same logic as `sf project deploy start --manifest`, and then targets every source file that belongs to those components. For example, if the manifest lists a Lightning web component, all the files in that component's bundle are targeted. The workspace itself isn't changed, so engines that need your entire code base still have it.
+
+Wildcard members (`<members>*</members>`) target every component of that type found in the workspace. Components listed in the manifest that don't exist in the workspace are ignored. If no listed component is found in the workspace, the command fails rather than analyzing the entire workspace.
+
+You can specify this flag multiple times. If you also specify the `--target` flag, then the full list of targeted files is the sum of both.
+
 # flags.rule-selector.summary
 
 Selection of rules, based on engine name, severity level, rule name, tag, or a combination of criteria separated by colons. 

@@ -34,6 +34,12 @@ export default class RulesCommand extends SfCommand<void> implements Displayable
 			multiple: true,
 			delimiter: ','
 		}),
+		'target-manifest': Flags.file({
+			summary: getMessage(BundleName.RulesCommand, 'flags.target-manifest.summary'),
+			description: getMessage(BundleName.RulesCommand, 'flags.target-manifest.description'),
+			multiple: true,
+			exists: true
+		}),
 		'rule-selector': Flags.string({
 			summary: getMessage(BundleName.RulesCommand, 'flags.rule-selector.summary'),
 			description: getMessage(BundleName.RulesCommand, 'flags.rule-selector.description'),
@@ -75,7 +81,8 @@ export default class RulesCommand extends SfCommand<void> implements Displayable
 			'output-file': outputFiles,
 			'rule-selector': parsedFlags['rule-selector'].flatMap(s => s.replace(/\s+/g, ' ').trim().split(' ')),
 			'workspace': parsedFlags['workspace'],
-			'target': parsedFlags['target']
+			'target': parsedFlags['target'],
+			'target-manifest': parsedFlags['target-manifest']
 		};
 
 		await action.execute(rulesInput);

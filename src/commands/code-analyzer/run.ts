@@ -37,6 +37,12 @@ export default class RunCommand extends SfCommand<void> implements Displayable {
 			multiple: true,
 			delimiter: ','
 		}),
+		'target-manifest': Flags.file({
+			summary: getMessage(BundleName.RunCommand, 'flags.target-manifest.summary'),
+			description: getMessage(BundleName.RunCommand, 'flags.target-manifest.description'),
+			multiple: true,
+			exists: true
+		}),
 		'target-org': Flags.string({
 			summary: getMessage(BundleName.RunCommand, 'flags.target-org.summary'),
 			description: getMessage(BundleName.RunCommand, 'flags.target-org.description'),
@@ -108,6 +114,7 @@ export default class RunCommand extends SfCommand<void> implements Displayable {
 			'severity-threshold': parsedFlags['severity-threshold'] === undefined ? undefined :
 				convertThresholdToEnum(parsedFlags['severity-threshold'].toLowerCase()),
 			'target': parsedFlags['target'],
+			'target-manifest': parsedFlags['target-manifest'],
 			'target-org': parsedFlags['target-org'],
 			'include-fixes': parsedFlags['include-fixes'],
 			'include-suggestions': parsedFlags['include-suggestions'],

@@ -39,6 +39,7 @@ export type RunInput = {
 	'rule-selector': string[];
 	'severity-threshold'?: SeverityLevel;
 	target?: string[];
+	'target-manifest'?: string[];
 	'target-org'?: string;
 	workspace: string[];
 	'include-fixes'?: boolean;
@@ -79,7 +80,7 @@ export class RunAction {
 			...enginePlugins.map(enginePlugin => core.addEnginePlugin(enginePlugin))
 		];
 		await Promise.all(addEnginePromises);
-		const workspace: Workspace = await createWorkspace(core, input.workspace, input.target);
+		const workspace: Workspace = await createWorkspace(core, input.workspace, input.target, input['target-manifest']);
 
 		// EngineProgressListeners should start listening right before we call Core's `.selectRules()` method, since
 		// that's when progress events can start being emitted.

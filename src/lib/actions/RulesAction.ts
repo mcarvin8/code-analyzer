@@ -29,6 +29,7 @@ export type RulesInput = {
 	'output-file'?: string[];
 	workspace?: string[];
 	target?: string[];
+	'target-manifest'?: string[];
 	view?: string;
 }
 
@@ -56,9 +57,9 @@ export class RulesAction {
 			...enginePlugins.map(enginePlugin => core.addEnginePlugin(enginePlugin))
 		];
 		await Promise.all(addEnginePromises);
-		const workspace: string[]|undefined = input.workspace || (input.target ? ['.'] : undefined);
+		const workspace: string[]|undefined = input.workspace || (input.target || input['target-manifest'] ? ['.'] : undefined);
 		const selectOptions = workspace
-			? {workspace: await createWorkspace(core, workspace, input.target)}
+			? {workspace: await createWorkspace(core, workspace, input.target, input['target-manifest'])}
 			: undefined;
 		// EngineProgressListeners should start listening right before we call Core's `.selectRules()` method, since
 		// that's when progress events can start being emitted.

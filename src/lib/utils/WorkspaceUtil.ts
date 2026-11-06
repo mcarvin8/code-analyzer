@@ -1,10 +1,20 @@
 import fg from 'fast-glob';
 import {CodeAnalyzer, Workspace} from '@salesforce/code-analyzer-core';
 import {getMessage, BundleName} from '../messages.js';
+import {resolveManifestTargets} from './ManifestUtil.js';
 
-export async function createWorkspace(core: CodeAnalyzer, workspacePaths: string[], targetPaths?: string[]): Promise<Workspace> {
+export async function createWorkspace(core: CodeAnalyzer, workspacePaths: string[], targetPaths?: string[], targetManifests?: string[]): Promise<Workspace> {
 	const processedWorkspacePaths: string[] = await processPaths(workspacePaths, 'Workspace');
-	const processedTargetPaths: string[]|undefined = targetPaths ? await processPaths(targetPaths, 'Target') : undefined;
+	let processedTargetPaths: string[]|undefined = targetPaths ? await processPaths(targetPaths, 'Target') : undefined;
+	if (targetManifests && targetManifests.length > 0) {
+		const manifestTargets: string[] = await resolveManifestTargets(targetManifests, processedWorkspacePaths);
+		processedTargetPaths = [...(processedTargetPaths ?? []), ...manifestTargets];
+		// Core treats an empty target list as "target the entire workspace", which is the opposite of what a user who
+		// supplied a manifest wants. So if nothing at all was resolved, fail loudly rather than silently scan everything.
+		if (processedTargetPaths.length === 0) {
+			throw new Error(getMessage(BundleName.WorkspaceUtil, 'error.manifest-resolved-no-files', [targetManifests.join(', ')]));
+		}
+	}
 	// Part of the contract for Core's `createWorkspace()` method is that paths are localized to the current OS, hence
 	// it's not a problem for Glob results to be UNIX-formatted since they'll be converted right back.
 	return core.createWorkspace(processedWorkspacePaths, processedTargetPaths);
